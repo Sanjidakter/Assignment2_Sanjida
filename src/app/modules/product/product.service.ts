@@ -1,9 +1,9 @@
-import { TProduct } from './product.interface';
-import { Product } from './product.model';
+import { TProduct } from "./product.interface";
+import { Product } from "./product.model";
 
 const createProductIntoDB = async (ProductData: TProduct) => {
   if (await Product.isProductExists(ProductData.name)) {
-    throw new Error('Product already exists!');
+    throw new Error("Product already exists!");
   }
   const result = await Product.create(ProductData);
   return result;
@@ -13,10 +13,13 @@ const getProductsFromDB = async (searchTerm?: string) => {
   const query = searchTerm
     ? {
         $or: [
-          { name: { $regex: searchTerm, $options: 'i' } },
-          { description: { $regex: searchTerm, $options: 'i' } },
-          { category: { $regex: searchTerm, $options: 'i' } },
-          { tags: { $regex: searchTerm, $options: 'i' } },
+          { name: { $regex: searchTerm, $options: "i" } },
+          { description: { $regex: searchTerm, $options: "i" } },
+          { category: { $regex: searchTerm, $options: "i" } },
+          { tags: { $regex: searchTerm, $options: "i" } },
+          { 'variants.value': { $regex: searchTerm, $options: 'i' } },
+          
+          
         ],
       }
     : {};
@@ -29,23 +32,25 @@ const getSingleProductFromDB = async (id: string) => {
   return result;
 };
 
-
 const deleteProductFromDB = async (id: string) => {
   const result = await Product.findByIdAndDelete(id);
   return result;
 };
 
-
-
 // update
-const updateProductInDB = async (_id: string, productData: Partial<TProduct>) => {
-  const updatedProduct = await Product.findByIdAndUpdate(_id, productData, { new: true, runValidators: true }).exec();
+const updateProductInDB = async (
+  _id: string,
+  productData: Partial<TProduct>
+) => {
+  const updatedProduct = await Product.findByIdAndUpdate(_id, productData, {
+    new: true,
+    runValidators: true,
+  }).exec();
   if (!updatedProduct) {
-    throw new Error('Product not found');
+    throw new Error("Product not found");
   }
   return updatedProduct;
 };
-
 
 export const ProductServices = {
   createProductIntoDB,
@@ -53,5 +58,4 @@ export const ProductServices = {
   getSingleProductFromDB,
   deleteProductFromDB,
   updateProductInDB,
-  
 };
