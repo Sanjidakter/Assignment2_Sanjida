@@ -9,9 +9,18 @@ const createProductIntoDB = async (ProductData: TProduct) => {
   return result;
 };
 
-const getAllProductsFromDB = async () => {
-  const result = await Product.find();
-  return result;
+const getProductsFromDB = async (searchTerm?: string) => {
+  const query = searchTerm
+    ? {
+        $or: [
+          { name: { $regex: searchTerm, $options: 'i' } },
+          { description: { $regex: searchTerm, $options: 'i' } },
+          { category: { $regex: searchTerm, $options: 'i' } },
+          { tags: { $regex: searchTerm, $options: 'i' } },
+        ],
+      }
+    : {};
+  return await Product.find(query);
 };
 
 const getSingleProductFromDB = async (id: string) => {
@@ -23,9 +32,7 @@ const deleteProductFromDB = async (id: string) => {
   const result = await Product.updateOne({ id }, { $set: { isDeleted: true } });
   return result;
 };;
-// const deleteProductFromDB = async (id: string) => {
-//   await Product.findByIdAndDelete(id);
-// };
+
 
 
 // update
@@ -33,25 +40,13 @@ const updateProductInDB = async (_id: string, productData: Partial<TProduct>) =>
   return await Product.updateOne({_id}, productData, { new: true, runValidators: true });
 };
 
-// search
-const searchProductsInDB = async (searchTerm: string) => {
-  const regex = new RegExp(searchTerm, 'i'); // Case-insensitive search
-  return await Product.find({
-    $or: [
-      { name: { $regex: regex } },
-      { description: { $regex: regex } },
-      { category: { $regex: regex } },
-      { tags: { $regex: regex } },
-    ],
-  });
-};
 
 
 export const ProductServices = {
   createProductIntoDB,
-  getAllProductsFromDB,
+  getProductsFromDB,
   getSingleProductFromDB,
   deleteProductFromDB,
   updateProductInDB,
-  searchProductsInDB,
+  
 };

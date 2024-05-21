@@ -36,19 +36,23 @@ const createProduct = async (req: Request, res: Response) => {
   }
 };
 
-const getAllProducts = async (req: Request, res: Response) => {
+const getProducts = async (req: Request, res: Response) => {
   try {
-    const result = await ProductServices.getAllProductsFromDB();
+    const { searchTerm } = req.query as { searchTerm?: string };
+
+    const result = await ProductServices.getProductsFromDB(searchTerm);
 
     res.status(200).json({
       success: true,
-      message: "Products fetched successfully!",
+      message: searchTerm 
+        ? `Products matching search term '${searchTerm}' fetched successfully!` 
+        : 'Products fetched successfully!',
       data: result,
     });
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || "Something went wrong",
+      message: err.message || 'Something went wrong',
       error: err,
     });
   }
@@ -128,34 +132,13 @@ const updateProduct = async (req: Request, res: Response) => {
   }
 };
 
-// for search
-const searchProducts = async (req: Request, res: Response) => {
-  try {
-    const { searchTerm } = req.query;
 
-    const result = await ProductServices.searchProductsInDB(
-      searchTerm as string
-    );
-
-    res.status(200).json({
-      success: true,
-      message: `Products matching search term '${searchTerm}' got successfully!`,
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || "Something went wrong",
-      error: err,
-    });
-  }
-};
 
 export const ProductControllers = {
   createProduct,
-  getAllProducts,
+  getProducts,
   getSingleProduct,
   deleteProduct,
   updateProduct,
-  searchProducts,
+  
 };
