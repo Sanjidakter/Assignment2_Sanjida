@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./product.service";
 import productValidationSchema from "./product.validation";
+import { ZodError } from "zod";
 
 const createProduct = async (req: Request, res: Response) => {
   try {
@@ -18,24 +19,22 @@ const createProduct = async (req: Request, res: Response) => {
       message: "Product created successfully!",
       data: result,
     });
-  } catch (err: any) {
-    // Handle validation errors and other errors
-    if (err.name === "ZodError") {
+  } catch (err) {
+    if (err instanceof ZodError) {
       res.status(400).json({
         success: false,
         message: "Validation error",
-        error: err.errors,
+        errors: err.errors,
       });
     } else {
       res.status(500).json({
         success: false,
-        message: err.message || "Something went wrong",
+        message: err instanceof Error ? err.message : "Something went wrong",
         error: err,
       });
     }
   }
 };
-
 
 const getProducts = async (req: Request, res: Response) => {
   try {
@@ -45,17 +44,25 @@ const getProducts = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: searchTerm 
-        ? `Products matching search term '${searchTerm}' fetched successfully!` 
-        : 'Products fetched successfully!',
+      message: searchTerm
+        ? `Products matching search term '${searchTerm}' fetched successfully!`
+        : "Products fetched successfully!",
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong',
-      error: err,
-    });
+  } catch (err) {
+    if (err instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: err.errors,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: err instanceof Error ? err.message : "Something went wrong",
+        error: err,
+      });
+    }
   }
 };
 
@@ -77,12 +84,20 @@ const getSingleProduct = async (req: Request, res: Response) => {
       message: "Product fetched successfully!",
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || "Something went wrong",
-      error: err,
-    });
+  } catch (err) {
+    if (err instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: err.errors,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: err instanceof Error ? err.message : "Something went wrong",
+        error: err,
+      });
+    }
   }
 };
 
@@ -95,7 +110,7 @@ const deleteProduct = async (req: Request, res: Response) => {
     if (!result) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found',
+        message: "Product not found",
       });
     }
 
@@ -104,12 +119,20 @@ const deleteProduct = async (req: Request, res: Response) => {
       message: "Product deleted successfully!",
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || "Something went wrong",
-      error: err,
-    });
+  } catch (err) {
+    if (err instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: err.errors,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: err instanceof Error ? err.message : "Something went wrong",
+        error: err,
+      });
+    }
   }
 };
 
@@ -130,24 +153,22 @@ const updateProduct = async (req: Request, res: Response) => {
       message: "Product updated successfully",
       data: result,
     });
-  } catch (err: any) {
-    if (err.name === "ZodError") {
+  } catch (err) {
+    if (err instanceof ZodError) {
       res.status(400).json({
         success: false,
         message: "Validation error",
-        error: err.errors,
+        errors: err.errors,
       });
     } else {
       res.status(500).json({
         success: false,
-        message: err.message || "Something went wrong",
+        message: err instanceof Error ? err.message : "Something went wrong",
         error: err,
       });
     }
   }
 };
-
-
 
 export const ProductControllers = {
   createProduct,
@@ -155,5 +176,4 @@ export const ProductControllers = {
   getSingleProduct,
   deleteProduct,
   updateProduct,
-  
 };

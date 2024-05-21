@@ -1,7 +1,8 @@
 import { Order } from './order.model';
 import { Product } from '../product/product.model';
+import { CreateOrderInput } from './order.validation';  
 
-const createOrderInDB = async (orderData: any) => {
+const createOrderInDB = async (orderData: CreateOrderInput) => {
   // Check product availability
   const product = await Product.findById(orderData.productId);
 
@@ -22,8 +23,6 @@ const createOrderInDB = async (orderData: any) => {
   return order;
 };
 
-
-
 const getOrdersFromDB = async (email?: string) => {
   const query = email ? { email } : {};
   return await Order.find(query);
@@ -31,6 +30,5 @@ const getOrdersFromDB = async (email?: string) => {
 
 export const OrderServices = {
   createOrderInDB,
-  getOrdersFromDB
-  
+  getOrdersFromDB,
 };

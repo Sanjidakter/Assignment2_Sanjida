@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { OrderServices } from './order.service';
-import { createOrderSchema } from './order.validation';
+import { createOrderSchema, CreateOrderInput } from './order.validation';
+import { ZodError } from 'zod';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
-    const orderData = createOrderSchema.parse(req.body);
+    const orderData: CreateOrderInput = createOrderSchema.parse(req.body);
 
     const result = await OrderServices.createOrderInDB(orderData);
 
@@ -13,12 +14,20 @@ const createOrder = async (req: Request, res: Response) => {
       message: 'Order created successfully!',
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong',
-      error: err,
-    });
+  } catch (err) {
+    if (err instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: err.errors,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: err instanceof Error ? err.message : 'Something went wrong',
+        error: err,
+      });
+    }
   }
 };
 
@@ -38,19 +47,16 @@ const getOrders = async (req: Request, res: Response) => {
       message: 'Orders fetched successfully!',
       data: result,
     });
-  } catch (err: any) {
+  } catch (err) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something went wrong',
+      message: err instanceof Error ? err.message : 'Something went wrong',
       error: err,
     });
   }
 };
 
-
-
-
 export const OrderControllers = {
   createOrder,
-  getOrders
+  getOrders,
 };
