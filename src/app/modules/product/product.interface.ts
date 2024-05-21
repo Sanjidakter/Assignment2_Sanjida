@@ -12,7 +12,7 @@ export type TInventory = {
 };
 
 export type TProduct = {
-  id: string;
+  // id: string;
   name: string;
   description: string;
   price: number;
@@ -27,6 +27,6 @@ export type TProduct = {
 //for creating static
 
 export interface ProductModel extends Model<TProduct> {
-  isProductExists(id: string): Promise<TProduct | null>;
+  isProductExists(name: string): Promise<TProduct | null>;
 }
 

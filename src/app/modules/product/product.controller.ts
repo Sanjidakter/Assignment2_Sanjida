@@ -36,6 +36,7 @@ const createProduct = async (req: Request, res: Response) => {
   }
 };
 
+
 const getProducts = async (req: Request, res: Response) => {
   try {
     const { searchTerm } = req.query as { searchTerm?: string };
@@ -83,6 +84,13 @@ const deleteProduct = async (req: Request, res: Response) => {
     const { productId } = req.params;
 
     const result = await ProductServices.deleteProductFromDB(productId);
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
 
     res.status(200).json({
       success: true,

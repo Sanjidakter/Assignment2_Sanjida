@@ -2,7 +2,7 @@ import { TProduct } from './product.interface';
 import { Product } from './product.model';
 
 const createProductIntoDB = async (ProductData: TProduct) => {
-  if (await Product.isProductExists(ProductData.id)) {
+  if (await Product.isProductExists(ProductData.name)) {
     throw new Error('Product already exists!');
   }
   const result = await Product.create(ProductData);
@@ -29,9 +29,9 @@ const getSingleProductFromDB = async (id: string) => {
 };
 
 const deleteProductFromDB = async (id: string) => {
-  const result = await Product.updateOne({ id }, { $set: { isDeleted: true } });
+  const result = await Product.findByIdAndDelete(id);
   return result;
-};;
+};
 
 
 

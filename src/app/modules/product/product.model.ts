@@ -14,10 +14,11 @@ const inventorySchema = new Schema({
 });
 
 const productSchema = new Schema<TProduct, ProductModel>({
-  id: { type: String, required: [true, "ID is required"], unique: true },
+  // id: { type: String, required: [true, "ID is required"], unique: true },
   name: {
     type: String,
     required: [true, "Name is required"],
+    unique: true, // Ensure the name is unique if you want to avoid duplicate products
   },
   description: {
     type: String,
@@ -62,8 +63,8 @@ productSchema.pre("aggregate", function (next) {
 });
 
 // Creating a custom static method
-productSchema.statics.isProductExists = async function (id: string) {
-  const existingProduct = await Product.findOne({ id });
+productSchema.statics.isProductExists = async function (name: string) {
+  const existingProduct = await Product.findOne({ name });
   return existingProduct;
 };
 
