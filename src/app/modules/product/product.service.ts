@@ -24,9 +24,11 @@ const getProductsFromDB = async (searchTerm?: string) => {
 };
 
 const getSingleProductFromDB = async (id: string) => {
-  const result = await Product.aggregate([{ $match: { id } }]);
+  // Assuming the ID is stored in the `_id` field
+  const result = await Product.findOne({ _id: id });
   return result;
 };
+
 
 const deleteProductFromDB = async (id: string) => {
   const result = await Product.findByIdAndDelete(id);

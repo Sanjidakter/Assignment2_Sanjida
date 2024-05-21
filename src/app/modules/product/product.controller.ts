@@ -65,6 +65,13 @@ const getSingleProduct = async (req: Request, res: Response) => {
 
     const result = await ProductServices.getSingleProductFromDB(productId);
 
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: "Product fetched successfully!",

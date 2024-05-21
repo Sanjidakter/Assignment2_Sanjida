@@ -1,7 +1,8 @@
 import { Order } from './order.model';
 import { Product } from '../product/product.model';
+import { IOrder } from './order.interface';
 
-const createOrderInDB = async (orderData: any) => {
+const createOrderInDB = async (orderData: IOrder) => {
   // Check product availability
   const product = await Product.findById(orderData.productId);
 

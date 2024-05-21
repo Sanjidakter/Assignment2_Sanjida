@@ -1,6 +1,4 @@
-import bcrypt from "bcrypt";
 import { Schema, model } from "mongoose";
-import config from "../../config";
 import { ProductModel, TProduct } from "./product.interface";
 
 const variantSchema = new Schema({
