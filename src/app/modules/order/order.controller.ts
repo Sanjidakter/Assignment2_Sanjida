@@ -14,7 +14,6 @@ const createOrder = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    const error = err as Error;
     res.status(500).json({
       success: false,
       message: err.message || 'Something went wrong',
@@ -40,7 +39,6 @@ const getOrders = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    const error = err as Error;
     res.status(500).json({
       success: false,
       message: err.message || 'Something went wrong',
