@@ -39,9 +39,12 @@ const deleteProductFromDB = async (id: string) => {
 
 // update
 const updateProductInDB = async (_id: string, productData: Partial<TProduct>) => {
-  return await Product.updateOne({_id}, productData, { new: true, runValidators: true });
+  const updatedProduct = await Product.findByIdAndUpdate(_id, productData, { new: true, runValidators: true }).exec();
+  if (!updatedProduct) {
+    throw new Error('Product not found');
+  }
+  return updatedProduct;
 };
-
 
 
 export const ProductServices = {

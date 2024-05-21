@@ -143,14 +143,11 @@ const updateProduct = async (req: Request, res: Response) => {
     const productData = req.body;
     const zodParsedData = productValidationSchema.parse(productData);
 
-    const result = await ProductServices.updateProductInDB(
-      productId,
-      zodParsedData
-    );
+    const result = await ProductServices.updateProductInDB(productId, zodParsedData);
 
     res.status(200).json({
       success: true,
-      message: "Product updated successfully",
+      message: "Product updated successfully!",
       data: result,
     });
   } catch (err) {
